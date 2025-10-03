@@ -1,0 +1,55 @@
+# Règles de validation Soda pour les données YouTube
+# Tests de qualité des données pour les tables yt_api
+
+checks for yt_api:
+# Test 1: Pas de Video_ID manquants
+- missing_count("Video_ID") = 0:
+name: "No missing Video_ID values"
+
+# Test 2: Pas de Video_ID dupliqués
+- duplicate_count("Video_ID") = 0:
+name: "No duplicate Video_ID values"
+
+# Test 3: Video_Title ne doit pas être vide
+- missing_count("Video_Title") = 0:
+name: "No missing Video_Title values"
+
+# Test 4: Upload_Date ne doit pas être vide
+- missing_count("Upload_Date") = 0:
+name: "No missing Upload_Date values"
+
+# Test 5: Duration ne doit pas être vide
+- missing_count("Duration") = 0:
+name: "No missing Duration values"
+
+# Test 6: Video_Views doit être positif
+- invalid_count("Video_Views") = 0:
+name: "Video_Views must be positive"
+invalid_count query: |
+SELECT COUNT(*)
+FROM yt_api
+WHERE "Video_Views" < 0
+
+# Test 7: Likes_Count doit être positif
+- invalid_count("Likes_Count") = 0:
+name: "Likes_Count must be positive"
+invalid_count query: |
+SELECT COUNT(*)
+FROM yt_api
+WHERE "Likes_Count" < 0
+
+# Test 8: Comments_Count doit être positif
+- invalid_count("Comments_Count") = 0:
+name: "Comments_Count must be positive"
+invalid_count query: |
+SELECT COUNT(*)
+FROM yt_api
+WHERE "Comments_Count" < 0
+
+# Test 9: Likes_Count ne doit pas être > Video_Views (logique métier)
+- invalid_count("Likes_Count_greater_than_Views") = 0:
+name: "Likes_Count cannot be greater than Video_Views"
+invalid_count query: |
+SELECT COUNT(*)
+FROM yt_api
+WHERE "Likes_Count" > "Video_Views"
